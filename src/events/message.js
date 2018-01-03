@@ -7,7 +7,7 @@ const handler = new patron.Handler(client.registry);
 
 client.on('message', (msg) => {
   (async () => {
-    if (msg.author.bot === true || credentials.ownerIds.some((v) => v === msg.author.id) === false) {
+    if (msg.author.bot === true) {
       return;
     }
 
