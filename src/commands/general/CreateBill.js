@@ -63,16 +63,21 @@ class CreateBill extends patron.Command {
     const guild = msg.client.guilds.get(Constants.serverId);
     const congressChannel = guild.channels.get(Constants.congressChannelId);
     const priavteCongressChannel = guild.channels.get(Constants.privateCongressChannelId);
-    const pins = await congressChannel.fetchPinnedMessages();
-    const pinArray = Array.from(pins.values());
-    
-    pinArray[pinArray.length - 1].unpin();
+    const pinnedMessages = await congressChannel.fetchPinnedMessages();
+
+    pinnedMessages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+
+    const oldestPin = pinnedMessages.first();
+
+    if (oldestPin !== undefined) {
+      oldestPin.unpin();
+    }
 
     bills.set(pollCount, new bill(args.name, args.description, choices, Date.now(), daysInMs));
     const endBillCount = pollCount;
+    await priavteCongressChannel.send('@everyone A new bill has been posted in ' + congressChannel);
     const newBillMessage = await congressChannel.send('A Poll Has Been Created\n**Name:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description + '.');
     newBillMessage.pin();
-    await priavteCongressChannel.send('@everyone A new bill has been posted in ' + congressChannel);
     await msg.channel.send('Successfully made poll **' + args.name + '**.');
     return msg.client.setTimeout(async () => {
       const createdBill = bills.get(endBillCount);
