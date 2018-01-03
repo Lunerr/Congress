@@ -7,8 +7,7 @@ class Bills extends patron.Command {
       names: ['bills'],
       groupName: 'general',
       description: 'Find all bills.',
-      guildOnly: false,
-      dmOnly: true
+      guildOnly: false
     });
   }
 

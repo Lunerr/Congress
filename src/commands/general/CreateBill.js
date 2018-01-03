@@ -56,18 +56,23 @@ class CreateBill extends patron.Command {
       }
     }
 
-    const daysInMs = await NumberUtil.daysToMs(args.days);
+    const daysInMs = await NumberUtil.secondsToMs(args.days);
 
     pollCount++;
 
     const guild = msg.client.guilds.get(Constants.serverId);
     const congressChannel = guild.channels.get(Constants.congressChannelId);
     const priavteCongressChannel = guild.channels.get(Constants.privateCongressChannelId);
+    const pins = await congressChannel.fetchPinnedMessages();
+    const pinArray = Array.from(pins.values());
+    
+    pinArray[pinArray.length - 1].unpin();
 
     bills.set(pollCount, new bill(args.name, args.description, choices, Date.now(), daysInMs));
     const endBillCount = pollCount;
-    await priavteCongressChannel.send('@everyone new poll in ' + congressChannel);
-    await congressChannel.send('A Poll Has Been Created\n**Name:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description + '.');
+    const newBillMessage = await congressChannel.send('A Poll Has Been Created\n**Name:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description + '.');
+    newBillMessage.pin();
+    await priavteCongressChannel.send('@everyone A new bill has been posted in ' + congressChannel);
     await msg.channel.send('Successfully made poll **' + args.name + '**.');
     return msg.client.setTimeout(async () => {
       const createdBill = bills.get(endBillCount);
@@ -82,12 +87,13 @@ class CreateBill extends patron.Command {
       }
 
       let message = '```';
+      let position = 1;
 
       for (let i = 0; i < createdBill.choices.length; i++) {
-        message += createdBill.choices[i] + ': ' + (choiceCount[i] || 0) + '\n';
+        message += position++ + '. ' + createdBill.choices[i] + ': ' + (choiceCount[i] || 0) + '\n';
       }
 
-      return congressChannel.send('**A Bill Has Ended**\n' + message + '```\nFinal bill results of `' + createdBill.name + '`.');
+      return congressChannel.send('A bill has ended.\n' + message + '```\nFinal results: `' + createdBill.name + '`.');
     }, daysInMs);
   }
 }
