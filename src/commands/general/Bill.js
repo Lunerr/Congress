@@ -8,7 +8,6 @@ class Bill extends patron.Command {
       groupName: 'general',
       description: 'Find a bill.',
       guildOnly: false,
-      dmOnly: true,
       args: [
         new patron.Argument({
           name: 'index',
@@ -21,6 +20,8 @@ class Bill extends patron.Command {
   }
 
   async run(msg, args) {
+    console.log(msg);
+    console.log(msg.member);
     let choices = '```';
     const remaining = args.bill.endsAt - (Date.now() - args.bill.createdAt);
     const timeLeft = await NumberUtil.msToTime(remaining);

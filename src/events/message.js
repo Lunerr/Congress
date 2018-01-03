@@ -2,9 +2,7 @@ const client = require('../singletons/client.js');
 const discord = require('discord.js');
 const credentials = require('../credentials.json');
 const patron = require('patron.js');
-const Try = require('../utility/Try.js');
 const Constants = require('../utility/Constants.js');
-const StringUtil = require('../utility/StringUtil.js');
 const handler = new patron.Handler(client.registry);
 
 client.on('message', (msg) => {
@@ -58,5 +56,5 @@ client.on('message', (msg) => {
       return msg.channel.send(message);
     }
   })()
-    .catch((err) => Logger.handleError(err));
+    .catch((err) => console.log(err));
 });

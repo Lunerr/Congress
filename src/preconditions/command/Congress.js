@@ -1,4 +1,5 @@
 const patron = require('patron.js');
+const Constants = require('../../utility/Constants.js');
 
 class Congress extends patron.Precondition {
   constructor() {
@@ -8,7 +9,8 @@ class Congress extends patron.Precondition {
   }
 
   async run(command, msg) {
-    if (msg.member.roles.has('395391128519573509')) {
+    const guildMember = await msg.client.guilds.get(Constants.serverId).fetchMember(msg.author);
+    if (guildMember.roles.has(Constants.roleId)) {
       return patron.PreconditionResult.fromSuccess();
     }
 

@@ -56,17 +56,21 @@ class CreateBill extends patron.Command {
       }
     }
 
-    const daysInMs = await NumberUtil.daysToMs(args.days);
+    const daysInMs = await NumberUtil.secondsToMs(args.days);
 
     pollCount++;
 
-    const channel = msg.client.guilds.get(Constants.serverId).channels.get(Constants.channelId);
+    const guild = msg.client.guilds.get(Constants.serverId);
+    const congressChannel = guild.channels.get(Constants.congressChannelId);
+    const priavteCongressChannel = guild.channels.get(Constants.privateCongressChannelId);
 
     bills.set(pollCount, new bill(args.name, args.description, choices, Date.now(), daysInMs));
-    await channel.send('A Poll Has Been Created\n**Name:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description + '.');
+    const endBillCount = pollCount;
+    await priavteCongressChannel.send('@everyone new poll in ' + congressChannel);
+    await congressChannel.send('A Poll Has Been Created\n**Name:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description + '.');
     await msg.channel.send('Successfully made poll **' + args.name + '**.');
     return msg.client.setTimeout(async () => {
-      const createdBill = bills.get(pollCount);
+      const createdBill = bills.get(endBillCount);
       const choiceCount = {};
 
       for (const choiceIndex of createdBill.votes.values()) {
@@ -83,7 +87,7 @@ class CreateBill extends patron.Command {
         message += createdBill.choices[i] + ': ' + (choiceCount[i] || 0) + '\n';
       }
 
-      return channel.send('**A Bill Has Ended**\n' + message + '```\nFinal bill results of `' + createdBill.name + '`.');
+      return congressChannel.send('**A Bill Has Ended**\n' + message + '```\nFinal bill results of `' + createdBill.name + '`.');
     }, daysInMs);
   }
 }
