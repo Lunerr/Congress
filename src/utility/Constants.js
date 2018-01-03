@@ -23,10 +23,10 @@ class Constants {
       prefix: /^\$/
     };
 
-    this.serverId = '395399853196443650';
-    this.congressChannelId = '395399853196443653';
-    this.privateCongressChannelId = '397939876160602112';
-    this.roleId = '395403485115449344';
+    this.serverId = '290759415362224139';
+    this.congressChannelId = '395727773467017218';
+    this.privateCongressChannelId = '395760284305850368';
+    this.roleId = '379970786385068042';
 
     this.intervals = {
       autoRemoveBill: 1000
