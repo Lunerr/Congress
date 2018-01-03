@@ -56,7 +56,7 @@ class CreateBill extends patron.Command {
       }
     }
 
-    const daysInMs = await NumberUtil.secondsToMs(args.days);
+    const daysInMs = await NumberUtil.daysToMs(args.days);
 
     pollCount++;
 
