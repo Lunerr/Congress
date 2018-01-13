@@ -38,14 +38,16 @@ class Vote extends patron.Command {
     const choiceIndex = args.bill.choices.findIndex((x, y) => y === args.choice - 1);
 
     if (choice === undefined) {
-      return msg.channel.send('This choice does not exist.');
+      return msg.reply('This choice does not exist.');
+    } else if (args.bill.endsAt - (Date.now() - args.bill.createdAt) <= 0) {
+      return msg.reply('This bill is already over.');
     }
 
     const password = await crypto.SHA3(args.password).toString();
 
     if (args.bill.votedIds.includes(msg.author.id)) {
       if (args.bill.votes.has(password) === false) {
-        return msg.channel.send('Your password is incorrect.');
+        return msg.reply('Your password is incorrect.');
       }
     } else {
       await args.bill.votedIds.push(msg.author.id);

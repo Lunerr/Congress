@@ -28,6 +28,8 @@ class Constants {
     this.privateCongressChannelId = '395760284305850368';
     this.roleId = '379970786385068042';
 
+    this.billLength = 86400000;
+
     this.intervals = {
       autoRemoveBill: 1000
     };

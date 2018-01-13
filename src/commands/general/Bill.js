@@ -20,8 +20,6 @@ class Bill extends patron.Command {
   }
 
   async run(msg, args) {
-    console.log(msg);
-    console.log(msg.member);
     let choices = '```';
     const remaining = args.bill.endsAt - (Date.now() - args.bill.createdAt);
     const timeLeft = await NumberUtil.msToTime(remaining);
@@ -34,7 +32,7 @@ class Bill extends patron.Command {
       }
     }
 
-    return msg.channel.send('**Name:** ' + args.bill.name + '\n**Choices**: ' + choices + '```\n**Description:** ' + args.bill.description + '\n**Time left:** ' + NumberUtil.pad(timeLeft.days, 2) + ':' + NumberUtil.pad(timeLeft.hours, 2) + ':' + NumberUtil.pad(timeLeft.minutes, 2) + '.');
+    return msg.channel.send('**Name:** ' + args.bill.name + '\n**Choices**: ' + choices + '```\n**Description:** ' + args.bill.description + '\n**Time left:** ' + (args.bill.endsAt - (Date.now() - args.bill.createdAt) <= 0 ? '00:00:00' : NumberUtil.pad(timeLeft.days, 2) + ':' + NumberUtil.pad(timeLeft.hours, 2) + ':' + NumberUtil.pad(timeLeft.minutes, 2)));
   }
 }
 

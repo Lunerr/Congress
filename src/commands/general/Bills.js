@@ -13,7 +13,7 @@ class Bills extends patron.Command {
 
   async run(msg) {
     if (bills.size === 0) {
-      return msg.channel.send('There\'s no bills.');
+      return msg.reply('No bills have been created.');
     }
 
     let message = '';

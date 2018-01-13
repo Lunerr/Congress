@@ -1,6 +1,7 @@
 const client = require('../singletons/client.js');
 const discord = require('discord.js');
-const credentials = require('../credentials.json');
+const StringUtil = require('../utility/StringUtil.js');
+const NumberUtil = require('../utility/NumberUtil.js');
 const patron = require('patron.js');
 const Constants = require('../utility/Constants.js');
 const handler = new patron.Handler(client.registry);
@@ -25,7 +26,9 @@ client.on('message', (msg) => {
           return;
         }
         case patron.CommandError.Cooldown: {
-          return;
+          const cooldown = NumberUtil.msToTime(result.remaining);
+
+          return msg.channel.send('**Cooldown:**\nHours: ' + cooldown.hours + '\nMinutes: ' + cooldown.minutes + '\nSeconds: ' + cooldown.seconds);
         }
         case patron.CommandError.Exception:
           if (result.error instanceof discord.DiscordAPIError) {
