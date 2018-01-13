@@ -50,7 +50,13 @@ class CreateBill extends patron.Command {
       }
     }
 
+<<<<<<< HEAD
     billCount++;
+=======
+    const daysInMs = await NumberUtil.daysToMs(args.days);
+
+    pollCount++;
+>>>>>>> 36907e107c6c5a6343016e1b6d0862d86e8f65b6
 
     const guild = msg.client.guilds.get(Constants.serverId);
     const congressChannel = guild.channels.get(Constants.congressChannelId);
