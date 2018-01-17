@@ -17,7 +17,6 @@
     // Best practices.
     "array-callback-return": "error",
     "default-case": "error",
-    "guard-for-in": "error",
     "no-alert": "error",
     "no-caller": "error",
     "no-div-regex": "error",

@@ -1,6 +1,5 @@
 const client = require('../singletons/client.js');
 const discord = require('discord.js');
-const StringUtil = require('../utility/StringUtil.js');
 const NumberUtil = require('../utility/NumberUtil.js');
 const patron = require('patron.js');
 const Constants = require('../utility/Constants.js');
@@ -8,11 +7,7 @@ const handler = new patron.Handler(client.registry);
 
 client.on('message', (msg) => {
   (async () => {
-    if (msg.author.bot === true) {
-      return;
-    }
-
-    if (Constants.regexes.prefix.test(msg.content) === false) {
+    if (msg.author.bot || Constants.regexes.prefix.test(msg.content) === false) {
       return;
     }
 

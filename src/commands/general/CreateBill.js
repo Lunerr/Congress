@@ -2,6 +2,7 @@ const Constants = require('../../utility/Constants.js');
 const patron = require('patron.js');
 const bill = require('../../structures/bill.js');
 const bills = require('../../singletons/bills.js');
+const Try = require('../../utility/Try.js');
 let billCount = 0;
 
 class CreateBill extends patron.Command {
@@ -54,7 +55,7 @@ class CreateBill extends patron.Command {
 
     const guild = msg.client.guilds.get(Constants.serverId);
     const congressChannel = guild.channels.get(Constants.congressChannelId);
-    const priavteCongressChannel = guild.channels.get(Constants.privateCongressChannelId);
+    const privateCongressChannelId = guild.channels.get(Constants.privateCongressChannelId);
     const pinnedMessages = await congressChannel.fetchPinnedMessages();
 
     pinnedMessages.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
@@ -67,9 +68,19 @@ class CreateBill extends patron.Command {
 
     bills.set(billCount, new bill(args.name, args.description, choices, Constants.billLength));
     const endBillCount = billCount;
-    await priavteCongressChannel.send('@everyone A new bill has been posted in ' + congressChannel + '.');
-    const newBillMessage = await congressChannel.send('**Bill:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description + '.');
+    await privateCongressChannelId.send('@everyone A new bill has been posted in ' + congressChannel + '.');
+    const newBillMessage = await congressChannel.send('**Bill:** ' + args.name + '\n**Choices**: ' + answers + '```\n**Description:** ' + args.description);
     newBillMessage.pin();
+    const role = await msg.realGuild.roles.get(Constants.roleId);
+
+    for (const [key, value] of role.members) {
+      const DM = await Try(value.user.send('The following bill has been created `' + args.name + '`\n**Vote:** `$vote ' + endBillCount + ' <choice index> <password>`\n**Choices:** ' + answers + '```'));
+
+      if (DM === false) {
+        await privateCongressChannelId.send('@here I am unable to DM ' + value.user + '. This congress member will be automatically impeached if this occurs once more.');
+      }
+    }
+
     await msg.channel.send('Successfully made bill **' + args.name + '**.');
     return msg.client.setTimeout(async () => {
       const createdBill = bills.get(endBillCount);
@@ -90,7 +101,8 @@ class CreateBill extends patron.Command {
         message += position++ + '. ' + createdBill.choices[i] + ': ' + (choiceCount[i] || 0) + '\n';
       }
 
-      return congressChannel.send('A bill has ended.\n' + message + '```\nFinal results: `' + createdBill.name + '`.');
+      await privateCongressChannelId.send('@here a bill has ended in ' + congressChannel + '.');
+      return congressChannel.send('A bill has ended.\n' + message + '```Voted: ' + createdBill.votedIds.map((x) => '<@' + x + '>').join(', ') + '\nFinal results: `' + createdBill.name + '`.');
     }, Constants.billLength);
   }
 }

@@ -23,16 +23,22 @@ class Bill extends patron.Command {
     let choices = '```';
     const remaining = args.bill.endsAt - (Date.now() - args.bill.createdAt);
     const timeLeft = await NumberUtil.msToTime(remaining);
-
     let position = 1;
+    const choiceCount = {};
 
-    for (const key in args.bill.choices) {
-      if (args.bill.choices.hasOwnProperty(key)) {
-        choices += '\n' + position++ + '. ' + args.bill.choices[key];
+    for (const choiceIndex of args.bill.votes.values()) {
+      if (choiceCount.hasOwnProperty(choiceIndex) === false) {
+        choiceCount[choiceIndex] = 1;
+      } else {
+        choiceCount[choiceIndex]++;
       }
     }
 
-    return msg.channel.send('**Name:** ' + args.bill.name + '\n**Choices**: ' + choices + '```\n**Description:** ' + args.bill.description + '\n**Time left:** ' + (args.bill.endsAt - (Date.now() - args.bill.createdAt) <= 0 ? '00:00:00' : NumberUtil.pad(timeLeft.days, 2) + ':' + NumberUtil.pad(timeLeft.hours, 2) + ':' + NumberUtil.pad(timeLeft.minutes, 2)));
+    for (let i = 0; i < args.bill.choices.length; i++) {
+      choices += '\n' + position++ + '. ' + args.bill.choices[i] + (args.bill.endsAt - (Date.now() - args.bill.createdAt) <= 0 ? ': ' + (choiceCount[i] || 0) : '');
+    }
+
+    return msg.channel.send('**Name:** ' + args.bill.name + '\n**Choices**: ' + choices + '```\n**Description:** ' + args.bill.description + '\n**Time left:** ' + (args.bill.endsAt - (Date.now() - args.bill.createdAt) <= 0 ? '00:00:00' : NumberUtil.pad(timeLeft.hours, 2) + ':' + NumberUtil.pad(timeLeft.minutes, 2) + ':' + NumberUtil.pad(timeLeft.seconds, 2)));
   }
 }
 

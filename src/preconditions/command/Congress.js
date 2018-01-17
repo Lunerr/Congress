@@ -9,8 +9,10 @@ class Congress extends patron.Precondition {
   }
 
   async run(command, msg) {
-    const guildMember = await msg.client.guilds.get(Constants.serverId).fetchMember(msg.author);
+    const guild = await msg.client.guilds.get(Constants.serverId);
+    const guildMember = await guild.fetchMember(msg.author);
     if (guildMember.roles.has(Constants.roleId)) {
+      msg.realGuild = guild;
       return patron.PreconditionResult.fromSuccess();
     }
 
